@@ -114,6 +114,7 @@ function save(exportThis) {
 		delete achievement.newStuff;
 		delete achievement.filters;
 	}
+	delete saveGame.heirlooms.slots;//MOD:lunatic
 	delete saveGame.heirlooms.values;
 	delete saveGame.heirlooms.defaultSteps;
 	delete saveGame.heirlooms.rarityNames;
@@ -1527,7 +1528,7 @@ function rewardResource(what, baseAmt, level, checkMapLootScale){
 		var toxMult = (game.challenges.Toxicity.lootMult * game.challenges.Toxicity.stacks) / 100;
 		amt *= (1 + toxMult);
 	}
-	if (what != "helium") amt = calcHeirloomBonus("Staff", what + "Drop", amt);
+	if (what != "helium") amt = calcHeirloomBonus("Juwel", what + "Drop", amt);//MOD:lunatic
 	//Yes, Lead giving double helium and Watch not reducing helium is on purpose!
 	if (game.global.challengeActive == "Watch" && what != "helium") amt /= 2;
 	if (game.global.challengeActive == "Lead" && ((game.global.world % 2) == 1)) amt *= 2;
@@ -1696,7 +1697,7 @@ function gather() {
 
 function getPlayerModifier(){
 	var playerModifier = game.global.playerModifier;
-	return calcHeirloomBonus("Shield", "playerEfficiency", playerModifier);
+	return calcHeirloomBonus("Dagger", "playerEfficiency", playerModifier);//MOD:lunatic
 }
 
 function calculateTimeToMax(resource, perSec, toNumber, fromGather) {
@@ -2431,7 +2432,7 @@ function checkVoidMap() {
 	}
 	if (max > 200) max = 200;
 	var min = (max > 80) ? (1000 + ((max - 80) * 13)) : 1000;
-	min *= (1 - (game.heirlooms.Shield.voidMaps.currentBonus / 100));
+	min *= (1 - (game.heirlooms.Dagger.voidMaps.currentBonus / 100));//MOD:lunatic
 	var chance = (Math.floor((game.global.lastVoidMap - min) / 10) / 50000);
 	game.global.lastVoidMap++;
 	if (chance < 0) return;
@@ -2564,9 +2565,17 @@ function populateHeirloomWindow(){
 	//Equipped hat
 	document.getElementById("ShieldEquipped").innerHTML = generateHeirloomIcon(game.global.ShieldEquipped, "Equipped");
 	document.getElementById("ShieldEquippedName").innerHTML = (typeof game.global.ShieldEquipped.name !== 'undefined') ? game.global.ShieldEquipped.name : "Nothing.";
+	//MOD:lunatic
+	//Equipped juwel
+	document.getElementById("JuwelEquipped").innerHTML = generateHeirloomIcon(game.global.JuwelEquipped, "Equipped");
+	document.getElementById("JuwelEquippedName").innerHTML = (typeof game.global.JuwelEquipped.name !== 'undefined') ? game.global.JuwelEquipped.name : "Nothing.";
 	//Equipped staff
 	document.getElementById("StaffEquipped").innerHTML = generateHeirloomIcon(game.global.StaffEquipped, "Equipped");
 	document.getElementById("StaffEquippedName").innerHTML = (typeof game.global.StaffEquipped.name !== 'undefined') ? game.global.StaffEquipped.name : "Nothing.";
+	//MOD:lunatic
+	//Equipped dagger
+	document.getElementById("DaggerEquipped").innerHTML = generateHeirloomIcon(game.global.DaggerEquipped, "Equipped");
+	document.getElementById("DaggerEquippedName").innerHTML = (typeof game.global.DaggerEquipped.name !== 'undefined') ? game.global.DaggerEquipped.name : "Nothing.";
 	displayAddCarriedBtn();
 	displayCarriedHeirlooms();
 	displayExtraHeirlooms();
@@ -2647,7 +2656,9 @@ function selectHeirloom(number, location, elem){
 	if (number > -1) heirloom = heirloom[number];
 	switch (location){
 		case "StaffEquipped":
+		case "JuwelEquipped":
 		case "ShieldEquipped":
+		case "DaggerEquipped":
 			document.getElementById("equippedHeirloomsBtnGroup").style.visibility = "visible";
 			break;
 		case "heirloomsCarried":	
@@ -2701,17 +2712,31 @@ function recycleAllHeirloomsClicked(confirmed){
 
 function recalculateHeirloomBonuses(){
 	for (var item in game.heirlooms.Staff) game.heirlooms.Staff[item].currentBonus = 0;
+	for (var item in game.heirlooms.Juwel) game.heirlooms.Juwel[item].currentBonus = 0;//MOD:lunatic
 	for (var item in game.heirlooms.Shield) game.heirlooms.Shield[item].currentBonus = 0;
+	for (var item in game.heirlooms.Dagger) game.heirlooms.Dagger[item].currentBonus = 0;//MOD:lunatic
 	if (game.global.StaffEquipped){
 		for (var item in game.global.StaffEquipped.mods){
 			var mod = game.global.StaffEquipped.mods[item];
 			game.heirlooms.Staff[mod[0]].currentBonus = mod[1];
 		}	
 	}
+	if (game.global.JuwelEquipped){//MOD:lunatic
+		for (var item in game.global.JuwelEquipped.mods){
+			var mod = game.global.JuwelEquipped.mods[item];
+			game.heirlooms.Juwel[mod[0]].currentBonus = mod[1];
+		}	
+	}
 	if (game.global.ShieldEquipped){
 		for (var item in game.global.ShieldEquipped.mods){
 			var mod = game.global.ShieldEquipped.mods[item];
 			game.heirlooms.Shield[mod[0]].currentBonus = mod[1];
+		}	
+	}
+		if (game.global.DaggerEquipped){//MOD:lunatic
+		for (var item in game.global.DaggerEquipped.mods){
+			var mod = game.global.DaggerEquipped.mods[item];
+			game.heirlooms.Dagger[mod[0]].currentBonus = mod[1];
 		}	
 	}
 }
@@ -2745,7 +2770,9 @@ function equipHeirloom(){
 
 function checkLowestHeirloom(){
 	var lowest = game.global.StaffEquipped.rarity;
+	if (lowest > game.global.JuwelEquipped.rarity) lowest = game.global.JuwelEquipped.rarity;//MOD:lunatic
 	if (lowest > game.global.ShieldEquipped.rarity) lowest = game.global.ShieldEquipped.rarity;
+	if (lowest > game.global.DaggerEquipped.rarity) lowest = game.global.DaggerEquipped.rarity;//MOD:lunatic
 	return lowest;
 }
 
@@ -2781,9 +2808,22 @@ function hideHeirloomSelectButtons(){
 	document.getElementById("modBreakdown").style.display = "none";
 }
 
+function getHeirloomIcon(heirloom) {//MOD:lunatic
+	switch(heirloom.type) {
+	case "Staff":
+		return 'glyphicon glyphicon-grain';
+	case "Juwel":
+		return 'iconmoon icon-diamonds';
+	case "Shield":
+		return 'icomoon icon-shield3';
+	default:
+		return 'icomoon icon-eyedropper';
+	}
+}
+
 function generateHeirloomIcon(heirloom, location, number){
 	if (typeof heirloom.name === 'undefined') return "<span class='icomoon icon-sad3'></span>";
-	var icon = (heirloom.type == "Shield") ? 'icomoon icon-shield3' : 'glyphicon glyphicon-grain';
+	var icon = getHeirloomIcon(heirloom);//MOD:lunatic
 	var html = '<span class="heirloomThing heirloomRare' + heirloom.rarity;
 	if (location == "Equipped") html += ' equipped';
 	var locText = "";
@@ -2799,13 +2839,13 @@ function generateHeirloomIcon(heirloom, location, number){
 function displaySelectedHeirloom(modSelected, selectedIndex, fromTooltip, locationOvr, indexOvr, fromPopup){
 	if (fromPopup && !game.options.menu.voidPopups.enabled) return;
 	var heirloom = getSelectedHeirloom(locationOvr, indexOvr);
-	var icon = (heirloom.type == "Shield") ? 'icomoon icon-shield3' : 'glyphicon glyphicon-grain';
+	var icon = getHeirloomIcon(heirloom);//MOD:lunatic
 	var html = '<div class="selectedHeirloomItem heirloomRare' + heirloom.rarity + '"><div class="row selectedHeirloomRow"><div class="col-xs-2 selectedHeirloomIcon"><span class="' + icon + '"></span></div><div class="col-xs-10"><span onclick="renameHeirloom(';
 	if (fromPopup) html += 'false, true';
 	html += ')" id="selectedHeirloomTitle">' + heirloom.name + '</span> '
 	if (!fromTooltip) html += '<span id="renameContainer"></span>';
 	html+= '</div></div>';
-	if (!fromTooltip && (game.global.selectedHeirloom[1] == "StaffEquipped" || game.global.selectedHeirloom[1] == "ShieldEquipped")) html += '<span class="heirloomEquipped">Equipped</span><br/>';
+	if (!fromTooltip && (game.global.selectedHeirloom[1] == "StaffEquipped" || game.global.selectedHeirloom[1] == "JuwelEquipped" || game.global.selectedHeirloom[1] == "ShieldEquipped" || game.global.selectedHeirloom[1] == "DaggerEquipped")) html += '<span class="heirloomEquipped">Equipped</span><br/>';//MOD:lunatic
 	var noneEmpty = true;
 	var opacity = (modSelected) ? 'style="opacity: 0.5" ' : '';
 	for (var x = 0; x < heirloom.mods.length; x++){
@@ -3037,11 +3077,25 @@ function checkSelectedModsFor(what){
 }
 
 function createHeirloom(zone, fromBones){
-	var slots = [1, 2, 2, 3, 3, 4, 4];
-	var rarityNames = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'];
+	var slots = game.heirlooms.slots;//MOD:lunatic
+	var rarityNames = game.heirlooms.rarityNames;//MOD:lunatic
 	//Determine Type
 	var seed = (fromBones) ? game.global.heirloomBoneSeed : game.global.heirloomSeed;
-	var type = (getRandomIntSeeded(seed++, 0, 2) == 0) ? "Shield" : "Staff";
+	var type;
+	switch(getRandomIntSeeded(seed++, 0, 4)) {//MOD:lunatic
+	case 0:
+		type = "Staff";
+		break;
+	case 1:
+		type = "Juwel";
+		break;
+	case 2:
+		type = "Shield";
+		break;
+	default:
+		type = "Dagger";
+		break;
+	}
 	//Sort through modifiers and build a list of eligible items. Check filters if applicable
 	var elligible = [];
 	for (var item in game.heirlooms[type]){
@@ -4228,7 +4282,7 @@ function startFight() {
         if (game.portal.Power_II.level > 0) game.global.soldierCurrentAttack *= (1 + (game.portal.Power_II.modifier * game.portal.Power_II.level));
 		game.global.soldierCurrentBlock = Math.floor((game.global.block * (game.jobs.Trainer.owned * (calcHeirloomBonus("Shield", "trainerEfficiency", game.jobs.Trainer.modifier) / 100)) + game.global.block) * trimpsFighting);
 		game.global.soldierHealthMax = calcHeirloomBonus("Shield", "trimpHealth", game.global.soldierHealthMax);
-		game.global.soldierCurrentAttack = calcHeirloomBonus("Shield", "trimpAttack", game.global.soldierCurrentAttack);
+		game.global.soldierCurrentAttack = calcHeirloomBonus("Dagger", "trimpAttack", game.global.soldierCurrentAttack);
 		game.global.soldierCurrentBlock = calcHeirloomBonus("Shield", "trimpBlock", game.global.soldierCurrentBlock);
 		if (game.global.formation !== 0){
 			game.global.soldierHealthMax *= (game.global.formation == 1) ? 4 : 0.5;
@@ -4273,7 +4327,7 @@ function startFight() {
 			if (game.global.formation !== 0){
 				attackTemp *= (game.global.formation == 2) ? 4 : 0.5;
 			}
-			attackTemp = calcHeirloomBonus("Shield", "trimpAttack", attackTemp);
+			attackTemp = calcHeirloomBonus("Dagger", "trimpAttack", attackTemp);
 			game.global.soldierCurrentAttack += attackTemp;
 			game.global.difs.attack = 0;
 		}
@@ -4844,7 +4898,7 @@ function fight(makeUp) {
 	var gotCrit = false;
 	var critSpan = document.getElementById("critSpan");
 	critSpan.innerHTML = "";
-	if (game.portal.Relentlessness.level > 0 || (game.heirlooms.Shield.critDamage.currentBonus > 0 && game.heirlooms.Shield.critChance.currentBonus > 0)){
+	if (game.portal.Relentlessness.level > 0 || (game.heirlooms.Dagger.critDamage.currentBonus > 0 && game.heirlooms.Dagger.critChance.currentBonus > 0)){
 		if (Math.random() < getPlayerCritChance()){
 			trimpAttack *= getPlayerCritDamageMult();
 			gotCrit = true;
@@ -4949,11 +5003,11 @@ function getNextVoidId(){
 }
 
 function getPlayerCritChance(){ //returns decimal: 1 = 100%
-	return (game.portal.Relentlessness.modifier * game.portal.Relentlessness.level) + (game.heirlooms.Shield.critChance.currentBonus / 100);
+	return (game.portal.Relentlessness.modifier * game.portal.Relentlessness.level) + (game.heirlooms.Dagger.critChance.currentBonus / 100);
 }
 
 function getPlayerCritDamageMult(){
-	var critMult = (((game.portal.Relentlessness.otherModifier * game.portal.Relentlessness.level) + (game.heirlooms.Shield.critDamage.currentBonus / 100)) + 1);
+	var critMult = (((game.portal.Relentlessness.otherModifier * game.portal.Relentlessness.level) + (game.heirlooms.Dagger.critDamage.currentBonus / 100)) + 1);
 	if (game.portal.Relentlessness.level > 0) critMult += 1;
 	return critMult;
 }

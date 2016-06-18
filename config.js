@@ -17,6 +17,12 @@
 		<trimps.github.io/license.txt>). If not, see
 		<http://www.gnu.org/licenses/>. */
 		
+function loadMOD_lunatic() {
+	var ng = newGame();
+	game.global.MOD_lunatic = ng.global.MOD_lunatic;
+	game.heirlooms = ng.heirlooms;
+}
+
 //Spoilers ahead, proceed with caution
 function newGame () {
 var toReturn = {
@@ -138,7 +144,9 @@ var toReturn = {
 		heirloomsExtra: [],
 		heirloomsCarried: [],
 		StaffEquipped: {},
+		JuwelEquipped: {},//MOD:lunatic
 		ShieldEquipped: {},
+		DaggerEquipped: {},//MOD:lunatic
 		nullifium: 0,
 		maxCarriedHeirlooms: 1,
 		selectedHeirloom: [],
@@ -1621,32 +1629,27 @@ var toReturn = {
 	
 	heirlooms: { //Basic layout for modifiers. Steps can be set specifically for each modifier, or else default steps will be used
 		//NOTE: currentBonus is the only thing that will persist!
-		values: [10, 20, 30, 50, 150, 300, 800],
-		defaultSteps: [[1, 2, 1], [2, 3, 1], [3, 6, 1], [6, 12, 1], [16, 40, 2], [32, 80, 4], [64, 160, 8]],
-		rarityNames: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal'],
-		rarities:[[7500,2500,-1,-1,-1,-1,-1],[2000,6500,1500,-1,-1,-1,-1],[500,4500,5000,-1,-1,-1,-1],[-1,3200,4300,2500,-1,-1,-1],[-1,1600,3300,5000,100,-1,-1],[-1,820,2400,6500,200,80,-1],[-1,410,1500,7500,400,160,30],[-1,200,600,8000,800,320,80],[-1,-1,-1,7600,1600,640,160], [-1,-1,-1,3500,5000,1200, 300]],
-		rarityBreakpoints: [41, 60, 80, 100, 125, 146, 166, 181, 201],
+		slots: [1, 2, 2, 3, 3, 4, 4, 5],//MOD:lunatic
+		values: [10, 20, 30, 50, 150, 300, 800, 3000],//MOD:lunatic
+		defaultSteps: [[1, 2, 1], [2, 3, 1], [3, 6, 1], [6, 12, 1], [16, 40, 2], [32, 80, 4], [64, 160, 8], [128, 320, 16]],//MOD:lunatic
+		rarityNames: ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Magnificent', 'Ethereal', 'Lunatic'],//MOD:lunatic
+		rarities:[//MOD:lunatic
+			[7500,2500,  -1,  -1,  -1,  -1,  -1,  -1],// 41
+			[2000,6500,1500,  -1,  -1,  -1,  -1,  -1],// 60
+			[ 500,4500,5000,  -1,  -1,  -1,  -1,  -1],// 80
+			[  -1,3200,4300,2500,  -1,  -1,  -1,  -1],//100
+			[  -1,1600,3300,5000, 100,  -1,  -1,  -1],//125
+			[  -1, 820,2400,6500, 200,  80,  -1,  -1],//146
+			[  -1, 410,1500,7500, 400, 160,  30,  -1],//166
+			[  -1, 200, 600,8000, 800, 320,  70,  10],//181
+			[  -1,  -1,  -1,7600,1600, 640, 140,  20],//201
+			[  -1,  -1,  -1,3500,5000,1200, 270,  40],//225
+			[  -1,  -1,  -1,1000,4860,3400, 660,  80],//250
+			[  -1,  -1,  -1, 200,4600,4200, 840, 160] //...
+			,[-1,-1,-1,-1,-1,-1,-1,10000]
+		],
+		rarityBreakpoints: [41, 60, 80, 100, 125, 146, 166, 181, 201, 225, 250,300],//MOD:lunatic
 		Staff: {
-			metalDrop: {
-				name: "Metal Drop Rate",
-				currentBonus: 0,
-			},
-			foodDrop: {
-				name: "Food Drop Rate",
-				currentBonus: 0,
-			},
-			woodDrop: {
-				name: "Wood Drop Rate",
-				currentBonus: 0,
-			},
-			gemsDrop: {
-				name: "Gem Drop Rate",
-				currentBonus: 0,
-			},
-			fragmentsDrop: {
-				name: "Fragment Drop Rate",
-				currentBonus: 0,
-			},
 			FarmerSpeed: {
 				name: "Farmer Efficiency",
 				currentBonus: 0,
@@ -1676,46 +1679,79 @@ var toReturn = {
 				currentBonus: 0,
 			}
 		},
-		Shield: {
-			playerEfficiency: {
-				name: "Player Efficiency",
+		Juwel: {//MOD:lunatic
+			metalDrop: {
+				name: "Metal Drop Rate",
 				currentBonus: 0,
-				steps: [[2,4,1],[4,8,1],[8,16,1],[16,32,2],[32,64,4],[64,128,8],[128,256,16]]
 			},
+			foodDrop: {
+				name: "Food Drop Rate",
+				currentBonus: 0,
+			},
+			woodDrop: {
+				name: "Wood Drop Rate",
+				currentBonus: 0,
+			},
+			gemsDrop: {
+				name: "Gem Drop Rate",
+				currentBonus: 0,
+			},
+			fragmentsDrop: {
+				name: "Fragment Drop Rate",
+				currentBonus: 0,
+			},
+			empty: {
+				name: "Empty",
+				currentBonus: 0,
+			}
+		},
+		Shield: {
 			trainerEfficiency: {
 				name: "Trainer Efficiency",
 				currentBonus: 0,
-				steps: [[1,5,1],[5,10,1],[10,20,1],[20,40,2],[40,60,2],[60,80,2],[80,100,2]]
+				steps: [[1,5,1],[5,10,1],[10,20,1],[20,40,2],[40,60,2],[60,80,2],[80,100,2],[100,120,2]]//MOD:lunatic
 			},
 			storageSize: {
 				name: "Storage Size",
 				currentBonus: 0,
-				steps: [[8,16,4],[16,32,4],[32,64,4],[64,128,4],[128,256,8],[256,512,16],[512,768,16]]
+				steps: [[8,16,4],[16,32,4],[32,64,4],[64,128,4],[128,256,8],[256,512,16],[512,768,16],[768,1024,16]]//MOD:lunatic
 			},
 			breedSpeed: {
 				name: "Breed Speed",
 				currentBonus: 0,
-				steps: [[1,2,1],[2,5,1],[5,10,1],[10,20,1],[70,100,3],[100,130,3],[130,160,3]]
+				steps: [[1,2,1],[2,5,1],[5,10,1],[10,20,1],[70,100,3],[100,130,3],[130,160,3],[160,190,3]]//MOD:lunatic
 			},
 			trimpHealth: {
 				name: "Trimp Health",
 				currentBonus: 0,
-				steps: [[1,2,1],[2,6,1],[6,20,2],[20,40,2],[50,100,5],[100,150,5],[150,200,5]]
-			},
-			trimpAttack: {
-				name: "Trimp Attack",
-				currentBonus: 0,
-				steps: [[1,2,1],[2,6,1],[6,20,2],[20,40,2],[50,100,5],[100,150,5],[150,200,5]]
+				steps: [[1,2,1],[2,6,1],[6,20,2],[20,40,2],[50,100,5],[100,150,5],[150,200,5],[200,250,5]]//MOD:lunatic
 			},
 			trimpBlock: {
 				name: "Trimp Block",
 				currentBonus: 0,
-				steps: [[1,2,1],[2,4,1],[4,7,1],[7,10,1],[28,40,1],[48,60,1],[68,80,1]]
+				steps: [[1,2,1],[2,4,1],[4,7,1],[7,10,1],[28,40,1],[48,60,1],[68,80,1],[88,100,2]]//MOD:lunatic
+			},
+			empty: {
+				name: "Empty",
+				currentBonus: 0,
+				rarity: 1
+			}
+		},
+		Dagger: {//MOD:lunatic
+			playerEfficiency: {
+				name: "Player Efficiency",
+				currentBonus: 0,
+				steps: [[2,4,1],[4,8,1],[8,16,1],[16,32,2],[32,64,4],[64,128,8],[128,256,16],[256,512,32]]//MOD:lunatic
+			},
+			trimpAttack: {
+				name: "Trimp Attack",
+				currentBonus: 0,
+				steps: [[1,2,1],[2,6,1],[6,20,2],[20,40,2],[50,100,5],[100,150,5],[150,200,5],[200,250,5]]//MOD:lunatic
 			},
 			critDamage: {
 				name: "Crit Damage, additive",
 				currentBonus: 0,
-				steps: [[10,20,5],[20,40,5],[40,60,5],[60,100,5],[100,200,10],[200,300,10],[300,400,10]],
+				steps: [[10,20,5],[20,40,5],[40,60,5],[60,100,5],[100,200,10],[200,300,10],[300,400,10],[400,500,10]],//MOD:lunatic
 				filter: function () {
 					return (!game.portal.Relentlessness.locked);
 				}
@@ -1723,7 +1759,7 @@ var toReturn = {
 			critChance: {
 				name: "Crit Chance, additive",
 				currentBonus: 0,
-				steps: [[0.2,0.6,0.2],[0.6,1.4,0.2],[1.4,2.6,0.2],[2.6,5,0.2],[5,7.4,0.2],[7.4,9.8,0.2],[9.8,12.2,0.2]],
+				steps: [[0.2,0.6,0.2],[0.6,1.4,0.2],[1.4,2.6,0.2],[2.6,5,0.2],[5,7.4,0.2],[7.4,9.8,0.2],[9.8,12.2,0.2],[12.2,14.6,0.2]],//MOD:lunatic
 				filter: function () {
 					return (!game.portal.Relentlessness.locked);
 				}
@@ -1731,7 +1767,7 @@ var toReturn = {
 			voidMaps: {
 				name: "Void Map Drop Chance",
 				currentBonus: 0,
-				steps: [[0.5,1.5,0.5],[2.5,4,0.5],[5,7,0.5],[8,11,0.5],[12,16,0.5],[17,22,0.5],[24,30,0.5]]
+				steps: [[0.5,1.5,0.5],[2.5,4,0.5],[5,7,0.5],[8,11,0.5],[12,16,0.5],[17,22,0.5],[24,30,0.5],[32,40,0.5]]//MOD:lunatic
 			},
 			empty: {
 				name: "Empty",
@@ -1739,7 +1775,6 @@ var toReturn = {
 				rarity: 1
 			}
 		}
-	
 	},
 	
 	
