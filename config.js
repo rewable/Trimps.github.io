@@ -17,13 +17,6 @@
 		<trimps.github.io/license.txt>). If not, see
 		<http://www.gnu.org/licenses/>. */
 		
-function loadMOD_lunatic() {
-	var ng = newGame();
-	game.global.MOD_lunatic = ng.global.MOD_lunatic;
-	game.portal = ng.portal;
-	game.heirlooms = ng.heirlooms;
-}
-
 //Spoilers ahead, proceed with caution
 function newGame () {
 var toReturn = {
