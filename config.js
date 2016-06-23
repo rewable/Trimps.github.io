@@ -592,13 +592,12 @@ var toReturn = {
 			additiveInc: 500,
 			modifier: 0.01
 		},
-		Overkill: {
+		Overkill: {//MOD:lunatic
 			level: 0,
 			locked: true,
 			priceBase: 1000000,
 			heliumSpent: 0,
-			tooltip: "You have overcome the otherworldly objective of obtaining Overkill, outstanding! Each level of this perk will allow 0.5% of your overkill damage to harm the next enemy. If this damage kills the next enemy, you will lose no time moving through that cell.",
-			max: 30
+			tooltip: "You have overcome the otherworldly objective of obtaining Overkill, outstanding! Each level of this perk will allow 0.5% of your overkill damage to harm the next enemy. If this damage kills the next enemy, you will lose no time moving through that cell."
 		},
 		Resourceful: {
 			level: 0,
@@ -676,7 +675,7 @@ var toReturn = {
 				return (timeOnZone * this.modifier * this.level);
 			}
 		},
-		Relentlessness:{
+		Relentlessness:{//MOD:lunatic
 			level: 0,
 			locked: true,
 			modifier: 0.05,
@@ -684,7 +683,7 @@ var toReturn = {
 			priceBase: 75,
 			heliumSpent: 0,
 			tooltip: "You've seen too many Trimps fall, it's time for more aggressive training. Bringing back these memories will cause your Trimps to gain a 5% chance to critically strike for 230% damage at level 1, and they will gain an additional 5% crit chance and 30% crit damage per level. Maximum of 10 levels.",
-			max: 10
+			max: 14
 		},
 		Carpentry: {
 			level: 0,
@@ -711,13 +710,12 @@ var toReturn = {
 			heliumSpent: 0,
 			tooltip: "Use your new-found leadership skills in order to increase the minimum damage your Trimps deal by 2% per level. Stacks up to 10 times, doesn't affect max damage. At 10 levels, you will get a minimum of 100% benefit from all attack damage per strike.",
 		},
-		Agility: {
+		Agility: {//MOD:lunatic
 			level: 0, 
 			modifier: 0.05,
 			priceBase: 4,
 			heliumSpent: 0,
 			tooltip: "Crank your portal into overdrive, requiring extra helium but increasing the clock speed of the Universe. Each level reduces the time between Trimp and Bad Guy attacks by 5% <b>of the current time (compounds)</b>. Maximum of 20 levels.",
-			max: 20
 		},
 		Bait: {
 			level: 0,
@@ -784,9 +782,7 @@ var toReturn = {
 			tooltip: "Walk back through the empty zones, learning how to milk them for every last drop. Each level permanently increases the amount of resources gained from battle by 5%.",
 			level: 0
 		},
-
 	},
-
 	challenges: {
 		Discipline: {
 			description: "Tweak the portal to bring you back to a universe where Trimps are less disciplined, in order to teach you how to be a better Trimp trainer. Your Trimps' minimum damage will be drastically lower, but their high end damage will be considerably higher. Completing The Dimension Of Anger will cause Trimp damage to return to normal.",
