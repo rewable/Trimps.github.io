@@ -5,3 +5,5 @@
 * Added a few rarity breakpoints
 * Added 'Dagger' heirloom type, moved offensive Shield stats to Dagger
 * Added 'Juwel' heirloom type, moved looting Staff stats to Juwel
+* Raised level limit from perks 'Overkill', 'Relentlessness'
+* Removed level limit from perk 'Agility'
