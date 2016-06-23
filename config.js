@@ -20,7 +20,7 @@
 function loadMOD_lunatic() {
 	var ng = newGame();
 	game.global.MOD_lunatic = ng.global.MOD_lunatic;
-	game.options = ng.options;
+	game.portal = ng.portal;
 	game.heirlooms = ng.heirlooms;
 }
 
